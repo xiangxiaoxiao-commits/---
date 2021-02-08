@@ -1,0 +1,258 @@
+//建库
+
+USE master
+GO
+CREATE DATABASE xiangxiaoMIS16
+ON
+( NAME =xiangxiaoMIS16_Data,
+	FILENAME = 'D:\DATABASE\xiangxiaoMIS16_Data.mdf',
+	SIZE = 10,
+	MAXSIZE = 50,
+	FILEGROWTH = 5 )
+LOG ON
+( NAME = 'xiangxiaoMIS16_Log',
+	FILENAME = 'D:\DATABASE\xiangxiaoMIS16_Log.ldf',
+	SIZE = 5MB,
+	MAXSIZE = 25MB,
+	FILEGROWTH = 5MB )
+GO
+
+//建立专业表
+create table xiangx_Major16(
+	xx_Mno16 char(10) not null primary key,
+	xx_Mname16 char(20)
+	)
+
+
+//建立班级表
+
+create table xiangx_class16(
+	xx_cno16 char(10) not null,
+	xx_mno16 char(10) ,
+	xx_classnum16 int,
+	foreign key(xx_mno16) references xiangx_major16(xx_mno16),
+	primary key(xx_cno16)
+	)
+
+
+
+
+//建立学生表
+create table xiangx_student16(
+	xx_sno16 char(10) not null,
+	xx_cno16 char(10) ,
+	xx_sname16 char(20) not null,
+	xx_ssex16 char(4),
+	xx_sage16 int,
+	xx_sbp char(20),
+	xx_scredit int,
+	foreign key(xx_cno16) references xiangx_class16(xx_cno16),
+	primary key(xx_sno16)
+	)
+
+//建立课程表
+create table xiangx_course16(
+	xx_ccno16 char(10) not null,
+	xx_ccname16 char(20) not null,
+	xx_ccopen16 char(10),
+	xx_cchour16 int,
+	xx_ccway char(10),
+	xx_cccredit int,
+	primary key(xx_ccno16)
+	)
+
+//建立教师表
+create table xiangx_teacher16(
+	xx_tno16 char(10) not null,
+	xx_tname16 char(20) not null,
+	xx_tsex16 char(4),
+	xx_tage16 int,
+	xx_tposition char(10),
+	xx_tcontact char(20),
+	primary key(xx_tno16)
+	)
+
+//建立成绩表
+create table xiangx_record16(
+	xx_ccno16 char(10) not null,
+	xx_tno16 char(10) not null,
+	xx_sno16 char(10) not null,
+	xx_rresult int,
+	foreign key(xx_tno16) references xiangx_teacher16(xx_tno16),
+	foreign key(xx_ccno16) references xiangx_course16(xx_ccno16),
+	foreign key(xx_sno16) references xiangx_student16(xx_sno16),
+	primary key(xx_tno16,xx_ccno16,xx_sno16)
+	)
+
+//插入数据
+insert into xiangx_major16 
+values('m01','计算机科学与技术')
+insert into xiangx_major16 
+values('m02','软件工程')
+insert into xiangx_major16 
+values('m03','土木工程')
+insert into xiangx_major16 
+values('m04','法学')
+
+insert into xiangx_class16
+values('c01','m01',30)
+insert into xiangx_class16 
+values('c02','m01',31)
+insert into xiangx_class16 
+values('c03','m02',32)
+insert into xiangx_class16 
+values('c04','m03',33)
+insert into xiangx_class16 
+values('c05','m04',34)
+
+insert into xiangx_student16
+values('s01','c01','张三','男',20,'浙江台州',8)
+insert into xiangx_student16
+values('s02','c02','张四','女',20,'浙江温州',6)
+insert into xiangx_student16
+values('s03','c02','李四','男',20,'浙江杭州',8)
+insert into xiangx_student16
+values('s04','c03','王五','男',20,'浙江嘉兴',4)
+insert into xiangx_student16
+values('s05','c04','沈六','女',20,'浙江诸暨',7)
+
+insert into xiangx_course16
+values('cc01','数据库','第二学期',48,'考试',3)
+insert into xiangx_course16
+values('cc02','算法分析与设计','第二学期',48,'考试',3)
+insert into xiangx_course16
+values('cc03','计算机组成原理','第一学期',48,'考试',2)
+insert into xiangx_course16
+values('cc04','体育','第二学期',48,'考查',1)
+
+
+insert into xiangx_teacher16
+values('t01','萧熏儿','女',28,'讲师','11111')
+insert into xiangx_teacher16
+values('t02','萧炎','男',30,'讲师','222222')
+insert into xiangx_teacher16
+values('t03','药老','男',55,'教授','333333')
+insert into xiangx_teacher16
+values('t04','云山','男',45,'副教授','444444')
+
+insert into xiangx_record16
+values('cc01','t01','s01',88)
+insert into xiangx_record16
+values('cc02','t02','s01',89)
+insert into xiangx_record16
+values('cc03','t03','s01',90)
+insert into xiangx_record16
+values('cc01','t01','s02',80)
+insert into xiangx_record16
+values('cc02','t02','s02',82)
+insert into xiangx_record16
+values('cc01','t01','s03',90)
+insert into xiangx_record16
+values('cc02','t02','s03',91)
+insert into xiangx_record16
+values('cc03','t03','s03',95)
+insert into xiangx_record16
+values('cc01','t01','s05',84)
+insert into xiangx_record16
+values('cc02','t02','s05',86)
+insert into xiangx_record16
+values('cc04','t04','s05',96)
+insert into xiangx_record16
+values('cc02','t02','s04',88)
+insert into xiangx_record16
+values('cc04','t04','s04',94)
+
+
+
+//视图baogao
+create view xiangx_baogao16
+as select xiangx_student16.xx_sname16,xiangx_course16.xx_ccname16,xiangx_record16.xx_rresult
+from xiangx_course16,xiangx_record16,xiangx_student16
+where xiangx_student16.xx_sno16=xiangx_record16.xx_sno16 and xiangx_record16.xx_ccno16=xiangx_course16.xx_ccno16
+
+
+
+//rank视图
+create view xiangx_rankbycourse16
+as select xiangx_course16.xx_ccname16,xiangx_student16.xx_sname16,xiangx_record16.xx_rresult
+from xiangx_course16,xiangx_record16,xiangx_student16
+where xiangx_student16.xx_sno16=xiangx_record16.xx_sno16 and xiangx_record16.xx_ccno16=xiangx_course16.xx_ccno16
+
+//order by xx_rresult desc
+
+
+
+//触发器 更新学分
+create trigger xiangx_update_Scredit16 on xiangx_record16
+for insert
+as
+	update xiangx_student16
+	set xx_scredit=xx_scredit+(select xx_cccredit from xiangx_course16 where xx_ccno16 in(select xx_ccno16 from inserted))
+	where xx_sno16 in(select xx_sno16 from inserted)
+
+//用户表
+create table xx_Users16(
+	xx_Username16 varchar(20) not null primary key,
+	xx_Password16 varchar(20) not null,
+	xx_Permission16 varchar(10))
+
+
+//视图 平均成绩 课程的
+create view xiangx_Course_AvgGrade16(xx_ccno16,xx_ccname16,xx_tname16,xx_AvgGrade16) as
+	select xiangx_course16.xx_ccno16,xx_ccname16,xx_Tname16,AVG(xx_rresult)
+	from xiangx_course16,xiangx_teacher16,xiangx_record16
+	where xiangx_record16.xx_ccno16=xiangx_course16.xx_ccno16 and xiangx_course16.xx_ccno16=xiangx_record16.xx_ccno16 and xiangx_record16.xx_tno16=xiangx_teacher16.xx_tno16
+	group by xiangx_course16.xx_ccno16,xx_ccname16,xx_Tname16
+
+//查询班级开设课程
+select distinct xiangx_course16.xx_ccname16 
+from xiangx_record16,xiangx_course16,xiangx_student16,xiangx_class16
+where xiangx_class16.xx_cno16=xiangx_student16.xx_cno16 and xiangx_student16.xx_sno16=xiangx_record16.xx_sno16 and xiangx_record16.xx_ccno16=xiangx_course16.xx_ccno16 and xiangx_class16.xx_cno16=
+
+//建立教师查询课程视图
+create view xiangx_teacherselect16
+as select xiangx_teacher16.xx_tno16,xiangx_teacher16.xx_tname16,xiangx_course16.xx_ccname16,xiangx_course16.xx_ccopen16,xiangx_course16.xx_cchour16
+from xiangx_course16,xiangx_teacher16,xiangx_record16
+where xiangx_record16.xx_tno16=xiangx_teacher16.xx_tno16 and xiangx_course16.xx_ccno16=xiangx_record16.xx_ccno16
+
+//建立学生查询所学课程和学分统计视图
+create view xiangx_studentselect16
+as select  distinct xiangx_student16.xx_sno16,xiangx_student16.xx_sname16,xiangx_course16.xx_ccname16,xiangx_course16.xx_cccredit,xiangx_student16.xx_scredit
+from xiangx_course16,xiangx_record16,xiangx_student16
+where xiangx_course16.xx_ccno16=xiangx_record16.xx_ccno16 and xiangx_student16.xx_sno16=xiangx_record16.xx_sno16
+
+
+//建立按学年查询成绩信息视图
+create view xiangx_selectbyyear16
+as select xiangx_student16.xx_sno16,xiangx_student16.xx_sname16,xiangx_course16.xx_ccname16,xiangx_course16.xx_ccopen16,xiangx_record16.xx_rresult
+from xiangx_student16,xiangx_record16,xiangx_course16
+where xiangx_student16.xx_sno16=xiangx_record16.xx_sno16 and xiangx_record16.xx_ccno16=xiangx_course16.xx_ccno16
+
+//创建地区人数统计视图
+create view xiangx_place16
+as
+select distinct xiangx_student16.xx_sbp as 地区,count(xiangx_student16.xx_sno16) as 地区人数
+from xiangx_student16
+group by xiangx_student16.xx_sbp
+
+
+//班级人数自加触发器
+create trigger xiangx_update_classnum16 on xiangx_student16
+for insert
+as
+	update xiangx_class16
+	set xx_classnum16=xx_classnum16+1
+	where xx_cno16 in(select xx_cno16 from inserted)
+
+//存储过程名单和课表
+create procedure returnName 
+as
+begin 
+    select xx_sno16,xx_sname16 from xiangx_student16; 
+end;  
+
+create procedure returncourese
+as
+begin 
+    select xx_ccno16,xx_ccname16 from xiangx_course16; 
+end;  

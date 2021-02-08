@@ -1,0 +1,173 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data;
+using System.Data.SqlClient;
+using System.Windows.Forms;
+
+namespace student
+{
+    class sqlConnect
+    {
+        public SqlConnection conn = null;
+        public sqlConnect() {
+            if (conn == null) {
+                conn = new SqlConnection("Data Sourse=(local);database=xiangx_MIS16;uid=sa;password=x00008265416;");
+                if (conn.State == ConnectionState.Closed) conn.Open();
+            }
+        }
+        public void closeConnect()
+        {
+            if(conn.State==ConnectionState.Open)conn.Close();
+        }
+         public DataSet Getds(string sql){
+              if( conn.State == ConnectionState.Closed )  conn.Open();
+                 DataSet ds = new DataSet();
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data;
+using System.Data.SqlClient;
+using System.Windows.Forms;
+
+namespace student
+{
+    class sqlConnect
+    {
+        public SqlConnection conn = null;
+        public sqlConnect() {
+            if (conn == null) {
+                conn = new SqlConnection("Data Sourse=(local);database=xiangx_MIS16;uid=sa;password=x00008265416;");
+                if (conn.State == ConnectionState.Closed) conn.Open();
+            }
+        }
+        public void closeConnect()
+        {
+            if(conn.State==ConnectionState.Open)conn.Close();
+        }
+         public DataSet Getds(string sql){
+              if( conn.State == ConnectionState.Closed )  conn.Open();
+                 DataSet ds = new DataSet();
+                SqlDataAdapter da = new SqlDataAdapter( sql , conn);
+                da.Fill(ds);
+                conn.Close();
+              return ds;
+        }
+           public int OperateData(string sql){
+                if(conn.State==ConnectionState.Closed) conn.Open();
+                 SqlCommand sqlcom = new SqlCommand();
+                 sqlcom.CommandText= sql;
+                 sqlcom.CommandType=CommandType.Text;
+                 sqlcom.Connection=conn;
+                 int x = sqlcom.ExecuteNonQuery();
+                 conn.Close();
+                return x;
+                }
+            public DataSet BindDataGridView(DataGridView dgv,string sql)
+            {
+                if (conn.State == ConnectionState.Closed) conn.Open();
+                SqlDataAdapter da = new SqlDataAdapter(sql, conn);
+                DataSet ds = new DataSet();
+                da.Fill(ds);
+                dgv.DataSource = ds.Tables[0];
+            return ds;
+            }
+           
+    }
+}
+
+
+
+
+
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace student
+{
+    public partial class frmLogin : Form
+    {
+        public frmLogin()
+        {
+            InitializeComponent();
+        }
+
+        private void btnLoin_Click(object sender, EventArgs e)
+        {
+            if (txtName.Text == "" || txtPwd.Text == "")
+            {
+                MessageBox.Show("用户名或密码不能为空！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                frmmain fmain = new frmmain();
+            }
+        }
+    }
+}
+
+
+
+
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace student
+{
+    public partial class frmmajor : Form
+    {
+        sqlConnect con = new sqlConnect();
+        public DataSet ds = new DataSet();
+        private string sql;
+        protected void SetBind()
+        {
+            try
+            {
+                sql = "select xx_Mno16 as 专业号，xx_Mname16 as 专业名";
+                con.BindDataGridView(dataGridView1, sql);
+                dataGridView1.Columns[0].ReadOnly = true;
+                dataGridView1.AllowUserToAddRows = false;
+            }
+            catch
+            {
+                MessageBox.Show("不能执行该操作！", "提示", MessageBoxButtons, OnKeyDown, MessageBoxIcon.Information);
+            }
+        }
+        public frmmajor()
+        {
+            InitializeComponent();
+            SetBind();
+        }
+    }
+}
+
+
+
+
+
+
+
